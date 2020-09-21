@@ -195,6 +195,8 @@ Rect next_img_rect(1280 - 50, 0, 50, 100);
 
 //SMIK
 bool id_key_pressed = 0;
+int mouse_scroll = 0;
+int mouse_scroll_val = 0;
 
 void callback_mouse_click(int event, int x, int y, int flags, void* user_data)
 {
@@ -245,6 +247,17 @@ void callback_mouse_click(int event, int x, int y, int flags, void* user_data)
 	{
 		x_end = max(x, 0);
 		y_end = max(y, 0);
+	}
+	if (event == 10/*EVENT_MOUSEHWHEEL*/)
+	{
+		if (getMouseWheelDelta(flags) > 0)
+		{
+			mouse_scroll = 1;
+		}
+		else
+		{
+			mouse_scroll = 2;
+		}
 	}
 }
 
@@ -819,6 +832,20 @@ int main(int argc, char *argv[])
 						if (id_key_pressed) //SMIK change label of selected roi
 						{
 							current_coord_vec[selected_id].id = current_obj_id;
+						}
+						else if (mouse_scroll)
+						{
+							if (mouse_scroll == 1)
+							{
+								if (current_coord_vec[selected_id].id < (max_object_id-1))
+									current_coord_vec[selected_id].id++;
+							}
+							else
+							{
+								if (current_coord_vec[selected_id].id > 0)
+									current_coord_vec[selected_id].id--;
+							}
+							mouse_scroll = 0;
 						}
 					}
 				}
